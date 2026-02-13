@@ -6,6 +6,5 @@ int main()
   std::cout << std::unitbuf;
   std::cerr << std::unitbuf;
 
-   std::cout << "$ ";
-   shell::update();
+   shell::repl();
 }

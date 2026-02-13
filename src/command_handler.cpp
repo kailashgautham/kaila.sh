@@ -4,10 +4,19 @@
 
 namespace shell
 {
-    void update()
+    void execute(std::string& command)
     {
-        std::string command;
-        std::getline(std::cin, command);
         std::cout << command << ": command not found" << std::endl;
+    }
+
+    [[noreturn]] void repl()
+    {
+        while (true)
+        {
+            std::cout << "$ ";
+            std::string command;
+            std::getline(std::cin, command);
+            execute(command);
+        }
     }
 }
