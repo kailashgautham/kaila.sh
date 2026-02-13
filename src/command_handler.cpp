@@ -2,12 +2,12 @@
 #include <string>
 #include <iostream>
 
-void update()
+namespace shell
 {
-    while (true)
+    void update()
     {
         std::string command;
-        std::cin >> command;
-        std:: cout << command << ": command not found" << std::endl;
+        std::getline(std::cin, command);
+        std::cout << command << ": command not found" << std::endl;
     }
 }

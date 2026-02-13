@@ -1,1 +1,4 @@
-void update();
+namespace shell
+{
+    void update();
+}
