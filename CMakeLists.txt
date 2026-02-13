@@ -4,8 +4,11 @@ project(shell-starter-cpp)
 
 file(GLOB_RECURSE SOURCE_FILES src/*.cpp src/*.hpp)
 
-set(CMAKE_CXX_STANDARD 23) # Enable the C++23 standard
+set(CMAKE_CXX_STANDARD 23)
 
-add_executable(shell ${SOURCE_FILES})
+add_executable(shell ${SOURCE_FILES}
+        src/command_handler.cpp)
+
+target_include_directories(shell PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 target_link_libraries(shell PRIVATE readline)
