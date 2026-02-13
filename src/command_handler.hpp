@@ -1,5 +1,12 @@
+#pragma once
+
+#include <unordered_set>
+#include <string>
+
 namespace shell
 {
     void update();
-    [[noreturn]] void repl();
+    void repl();
+
+    static constexpr std::string EXIT_COMMAND = "exit";
 }
