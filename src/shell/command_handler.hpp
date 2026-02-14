@@ -1,7 +1,7 @@
 #pragma once
 
-#include <echo/echo.hpp>
-#include <exit/exit.hpp>
+#include <common/common.hpp>
+
 #include <unordered_map>
 #include <string>
 #include <iostream>
@@ -10,10 +10,6 @@
 
 namespace shell
 {
-    static std::unordered_map<std::string, std::function<int16_t (const std::string&)>> string_to_command {
-            {"exit", &exit::execute},
-            {"echo", &echo::execute},
-    };
 
     std::pair<std::string, std::string> extract_keyword_input(const std::string& command)
     {
@@ -30,12 +26,12 @@ namespace shell
     int16_t execute(const std::string& command)
     {
         const auto [keyword, input] = extract_keyword_input(command);
-        if (!string_to_command.contains(keyword))
+        if (!common::string_to_command.contains(keyword))
         {
             std::cout << keyword << ": command not found" << std::endl;
             return 1;
         }
-        return string_to_command[keyword](input);
+        return common::string_to_command[keyword](input);
     }
 
     void repl()
