@@ -3,9 +3,13 @@
 
 namespace shell::echo
 {
-    int execute(const std::string& command)
+    int execute(const std::vector<std::string>& tokens)
     {
-        std::printf("%s\n", command.c_str());
+        for (const std::string& token : tokens)
+        {
+            std::printf("%s", token.c_str());
+        }
+        std::printf("\n");
         return 0;
     }
 }
