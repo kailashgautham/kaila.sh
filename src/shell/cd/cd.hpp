@@ -1,11 +1,17 @@
 #include <string>
 #include <iostream>
 #include <filesystem>
+#include <common/common.hpp>
 
 namespace shell::cd
 {
     int execute(const std::string& command)
     {
+        if (command == "~")
+        {
+            std::filesystem::current_path(common::HOME);
+            return 0;
+        }
         if (std::filesystem::exists(command) && std::filesystem::is_directory(command))
         {
             std::filesystem::current_path(command);

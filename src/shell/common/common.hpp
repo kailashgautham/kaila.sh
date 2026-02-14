@@ -19,9 +19,12 @@ namespace shell::common
 
     static std::vector<std::string> paths;
 
-    void setup_paths(const std::string& path)
+    static std::string HOME = std::getenv("HOME");
+    const std::string PATH = std::getenv("PATH");
+
+    void setup_paths()
     {
-        std::stringstream ss(path);
+        std::stringstream ss(PATH);
         std::string current_path;
         while (std::getline(ss, current_path, ':'))
         {
