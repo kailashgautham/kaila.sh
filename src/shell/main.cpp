@@ -1,10 +1,15 @@
-#include <iostream>
 #include <command_handler.hpp>
+#include <type/type.hpp>
 
-int main()
+#include <iostream>
+
+int main(int argc, char* argv[])
 {
   std::cout << std::unitbuf;
   std::cerr << std::unitbuf;
 
-   shell::repl();
+  const std::string PATH = std::getenv("PATH");
+  shell::type::setup_paths(PATH);
+
+  shell::repl();
 }
