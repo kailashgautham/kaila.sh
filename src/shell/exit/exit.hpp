@@ -3,7 +3,7 @@
 
 namespace shell::exit
 {
-    int16_t execute(const std::string&)
+    int execute(const std::string&)
     {
         return -1;
     }

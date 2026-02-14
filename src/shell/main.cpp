@@ -9,7 +9,7 @@ int main(int argc, char* argv[])
   std::cerr << std::unitbuf;
 
   const std::string PATH = std::getenv("PATH");
-  shell::type::setup_paths(PATH);
+  shell::common::setup_paths(PATH);
 
   shell::repl();
 }

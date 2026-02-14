@@ -3,7 +3,7 @@
 
 namespace shell::echo
 {
-    int16_t execute(const std::string& command)
+    int execute(const std::string& command)
     {
         std::cout << command << std::endl;
         return 0;

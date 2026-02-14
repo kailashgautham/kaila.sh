@@ -1,6 +1,9 @@
 #pragma once
 
 #include <common/common.hpp>
+#include <echo/echo.hpp>
+#include <exit/exit.hpp>
+#include <type/type.hpp>
 
 #include <unordered_map>
 #include <string>
@@ -10,6 +13,11 @@
 
 namespace shell
 {
+    static std::unordered_map<std::string, std::function<int (const std::string&)>> string_to_command {
+            {"echo", &echo::execute},
+            {"exit", &exit::execute},
+            {"type", &type::execute},
+    };
 
     std::pair<std::string, std::string> extract_keyword_input(const std::string& command)
     {
@@ -23,15 +31,22 @@ namespace shell
         return {keyword, input};
     }
 
-    int16_t execute(const std::string& command)
+    int execute(const std::string& command)
     {
         const auto [keyword, input] = extract_keyword_input(command);
-        if (!common::string_to_command.contains(keyword))
+        if (string_to_command.contains(keyword))
+        {
+            return string_to_command[keyword](input);
+        }
+        else if (!common::get_command_path(keyword).empty())
+        {
+            return std::system(command.c_str());
+        }
+        else
         {
             std::cout << keyword << ": command not found" << std::endl;
             return 1;
         }
-        return common::string_to_command[keyword](input);
     }
 
     void repl()
@@ -41,7 +56,7 @@ namespace shell
             std::cout << "$ ";
             std::string command;
             std::getline(std::cin, command);
-            int16_t exit_code = execute(command);
+            int exit_code = execute(command);
             if (exit_code == -1)
             {
                 break;
