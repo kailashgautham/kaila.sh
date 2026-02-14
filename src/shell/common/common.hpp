@@ -12,6 +12,7 @@ namespace shell::common
     static std::unordered_set<std::string> commands {
             "echo",
             "exit",
+            "pwd",
             "type"
     };
 

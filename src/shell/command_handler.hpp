@@ -3,6 +3,7 @@
 #include <common/common.hpp>
 #include <echo/echo.hpp>
 #include <exit/exit.hpp>
+#include <pwd/pwd.hpp>
 #include <type/type.hpp>
 
 #include <unordered_map>
@@ -16,6 +17,7 @@ namespace shell
     static std::unordered_map<std::string, std::function<int (const std::string&)>> string_to_command {
             {"echo", &echo::execute},
             {"exit", &exit::execute},
+            {"pwd", &pwd::execute},
             {"type", &type::execute},
     };
 
