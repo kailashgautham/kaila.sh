@@ -6,7 +6,7 @@ namespace shell::pwd
 {
     int execute(const std::string&)
     {
-        std::cout << std::filesystem::current_path().string() << std::endl;
+        std::printf("%s\n", std::filesystem::current_path().string().c_str());
         return 0;
     }
 }

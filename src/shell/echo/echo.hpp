@@ -5,7 +5,7 @@ namespace shell::echo
 {
     int execute(const std::string& command)
     {
-        std::cout << command << std::endl;
+        std::printf("%s\n", command.c_str());
         return 0;
     }
 }

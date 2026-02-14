@@ -15,7 +15,7 @@ namespace shell::type
     {
         if (common::commands.contains(command))
         {
-            std::cout << command << " is a shell builtin" << std::endl;
+            std::printf("%s is a shell builtin\n", command.c_str());
             return 0;
         }
         std::string program_path = common::get_command_path(command);
@@ -27,7 +27,7 @@ namespace shell::type
         }
         else
         {
-            std::cout << command << ": not found" << std::endl;
+            std::printf("%s: not found\n", command.c_str());
             return 1;
         }
     }

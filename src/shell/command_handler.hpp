@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cd/cd.hpp>
 #include <common/common.hpp>
 #include <echo/echo.hpp>
 #include <exit/exit.hpp>
@@ -15,6 +16,7 @@
 namespace shell
 {
     static std::unordered_map<std::string, std::function<int (const std::string&)>> string_to_command {
+            {"cd", &cd::execute},
             {"echo", &echo::execute},
             {"exit", &exit::execute},
             {"pwd", &pwd::execute},
@@ -46,7 +48,7 @@ namespace shell
         }
         else
         {
-            std::cout << keyword << ": command not found" << std::endl;
+            std::printf("%s: command not found\n", keyword.c_str());
             return 1;
         }
     }
@@ -55,7 +57,7 @@ namespace shell
     {
         while (true)
         {
-            std::cout << "$ ";
+            std::printf("$ ");
             std::string command;
             std::getline(std::cin, command);
             int exit_code = execute(command);
