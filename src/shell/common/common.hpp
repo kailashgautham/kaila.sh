@@ -54,7 +54,7 @@ namespace shell::common
     {
         size_t idx = 0;
         std::vector<std::string> tokenized_input;
-        for (; idx < input.size(); ++idx)
+        for (; idx < input.size(); )
         {
            if (input[idx] == '\'' || input[idx] == '\"')
            {
@@ -63,7 +63,12 @@ namespace shell::common
                {
                    tokenized_input.emplace_back(input.substr(idx + 1, string_end - idx - 1));
                }
-               idx = string_end;
+               idx = string_end + 1;
+           }
+           else if (input[idx] == '\\')
+           {
+               tokenized_input.emplace_back(std::string{input[idx + 1]});
+               idx += 2;
            }
            else if (input[idx] == ' ')
            {
@@ -71,21 +76,23 @@ namespace shell::common
                {
                    tokenized_input.emplace_back(" ");
                }
+               ++idx;
            }
            else
            {
                size_t string_space = input.find(' ', idx);
                size_t string_apostrophe = input.find('\'', idx);
                size_t string_quote = input.find('\"', idx);
-               if (string_space == std::string::npos && string_apostrophe == std::string::npos && string_quote == std::string::npos)
+               size_t string_backslash = input.find('\\', idx);
+               if (string_space == std::string::npos && string_apostrophe == std::string::npos && string_quote == std::string::npos && string_backslash == std::string::npos)
                {
                    tokenized_input.emplace_back(input.substr(idx));
                    break;
                }
 
-               size_t string_end = std::min({string_space, string_apostrophe, string_quote});
+               size_t string_end = std::min({string_space, string_apostrophe, string_quote, string_backslash});
                tokenized_input.emplace_back(input.substr(idx, string_end - idx));
-               idx = string_end - 1;
+               idx = string_end;
            }
         }
         return tokenized_input;
