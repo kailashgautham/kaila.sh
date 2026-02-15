@@ -56,13 +56,40 @@ namespace shell::common
         std::vector<std::string> tokenized_input;
         for (; idx < input.size(); )
         {
-           if (input[idx] == '\'' || input[idx] == '\"')
+           if (input[idx] == '\'')
            {
                size_t string_end = input.find(input[idx], idx + 1);
                if (string_end > idx + 1)
                {
                    tokenized_input.emplace_back(input.substr(idx + 1, string_end - idx - 1));
                }
+               idx = string_end + 1;
+           }
+           else if (input[idx] == '\"')
+           {
+               ++idx;
+               size_t string_end = input.find('\"', idx);
+               for (size_t string_backslash = input.find('\\', idx);
+                    string_backslash != std::string::npos && string_backslash < string_end;
+                    string_backslash = input.find('\\', idx))
+               {
+                   tokenized_input.emplace_back(input.substr(idx, string_backslash - idx));
+                   idx = string_backslash;
+                   if (input[idx + 1] == '\"' || input[idx + 1] == '\\')
+                   {
+                       tokenized_input.emplace_back(std::string{input[++idx]});
+                       if (input[idx] == '\"')
+                       {
+                           string_end = input.find('\"', idx + 1);
+                       }
+                   }
+                   else
+                   {
+                       tokenized_input.emplace_back(std::string{input[idx]});
+                   }
+                   idx++;
+               }
+               tokenized_input.emplace_back(input.substr(idx, string_end - idx));
                idx = string_end + 1;
            }
            else if (input[idx] == '\\')
@@ -84,6 +111,7 @@ namespace shell::common
                size_t string_apostrophe = input.find('\'', idx);
                size_t string_quote = input.find('\"', idx);
                size_t string_backslash = input.find('\\', idx);
+
                if (string_space == std::string::npos && string_apostrophe == std::string::npos && string_quote == std::string::npos && string_backslash == std::string::npos)
                {
                    tokenized_input.emplace_back(input.substr(idx));
