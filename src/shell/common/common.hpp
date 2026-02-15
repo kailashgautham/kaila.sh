@@ -50,6 +50,64 @@ namespace shell::common
         return "";
     }
 
+    void tokenize_apostrophe(size_t& idx, const std::string& input, std::vector<std::string>& tokenized_input)
+    {
+        size_t string_end = input.find(input[idx], idx + 1);
+        if (string_end > idx + 1)
+        {
+            tokenized_input.emplace_back(input.substr(idx + 1, string_end - idx - 1));
+        }
+        idx = string_end + 1;
+    }
+
+    void tokenize_quote(size_t& idx, const std::string& input, std::vector<std::string>& tokenized_input)
+    {
+        ++idx;
+        size_t string_end = input.find('\"', idx);
+        for (size_t string_backslash = input.find('\\', idx);
+             string_backslash != std::string::npos && string_backslash < string_end;
+             string_backslash = input.find('\\', idx))
+        {
+            tokenized_input.emplace_back(input.substr(idx, string_backslash - idx));
+            idx = string_backslash;
+            if (input[idx + 1] == '\"' || input[idx + 1] == '\\')
+            {
+                tokenized_input.emplace_back(std::string{input[++idx]});
+                if (input[idx] == '\"')
+                {
+                    string_end = input.find('\"', idx + 1);
+                }
+            }
+            else
+            {
+                tokenized_input.emplace_back(std::string{input[idx]});
+            }
+            idx++;
+        }
+        tokenized_input.emplace_back(input.substr(idx, string_end - idx));
+        idx = string_end + 1;
+    }
+
+    std::string tokenize_quoted_command(const std::string& command)
+    {
+        size_t idx = 0;
+        std::vector<std::string> tokens;
+        if (command[0] == '\'')
+        {
+            common::tokenize_apostrophe(idx, command, tokens);
+        }
+        else
+        {
+            common::tokenize_quote(idx, command, tokens);
+        }
+        std::string new_command = "";
+        for (const std::string& token : tokens)
+        {
+            new_command += token;
+        }
+        return new_command;
+    }
+
     std::vector<std::string> tokenize_input(const std::string& input)
     {
         size_t idx = 0;
@@ -58,39 +116,11 @@ namespace shell::common
         {
            if (input[idx] == '\'')
            {
-               size_t string_end = input.find(input[idx], idx + 1);
-               if (string_end > idx + 1)
-               {
-                   tokenized_input.emplace_back(input.substr(idx + 1, string_end - idx - 1));
-               }
-               idx = string_end + 1;
+               tokenize_apostrophe(idx, input, tokenized_input);
            }
            else if (input[idx] == '\"')
            {
-               ++idx;
-               size_t string_end = input.find('\"', idx);
-               for (size_t string_backslash = input.find('\\', idx);
-                    string_backslash != std::string::npos && string_backslash < string_end;
-                    string_backslash = input.find('\\', idx))
-               {
-                   tokenized_input.emplace_back(input.substr(idx, string_backslash - idx));
-                   idx = string_backslash;
-                   if (input[idx + 1] == '\"' || input[idx + 1] == '\\')
-                   {
-                       tokenized_input.emplace_back(std::string{input[++idx]});
-                       if (input[idx] == '\"')
-                       {
-                           string_end = input.find('\"', idx + 1);
-                       }
-                   }
-                   else
-                   {
-                       tokenized_input.emplace_back(std::string{input[idx]});
-                   }
-                   idx++;
-               }
-               tokenized_input.emplace_back(input.substr(idx, string_end - idx));
-               idx = string_end + 1;
+               tokenize_quote(idx, input, tokenized_input);
            }
            else if (input[idx] == '\\')
            {
@@ -129,7 +159,7 @@ namespace shell::common
     std::pair<std::string, std::vector<std::string>> extract_keyword_input(const std::string& command)
     {
         size_t first_word_idx = command.find(' ');
-        if (first_word_idx == std::string::npos)
+        if (first_word_idx == std::string::npos || command[0] == '\'' || command[0] == '\"')
         {
             return {command, {}};
         }

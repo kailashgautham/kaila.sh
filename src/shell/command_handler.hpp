@@ -12,6 +12,7 @@
 #include <iostream>
 #include <functional>
 #include <sstream>
+#include "cmd/cmd.hpp"
 
 namespace shell
 {
@@ -25,12 +26,16 @@ namespace shell
 
     int execute(const std::string& command)
     {
-        const auto [keyword, tokenized_input] = common::extract_keyword_input(command);
+        auto [keyword, tokenized_input] = common::extract_keyword_input(command);
         if (string_to_command.contains(keyword))
         {
             return string_to_command[keyword](tokenized_input);
         }
-        else if (!common::get_command_path(keyword).empty())
+        if (command[0] == '\'' || command[0] == '\"')
+        {
+            keyword = common::tokenize_quoted_command(command);
+        }
+        if (!common::get_command_path(keyword).empty())
         {
             return std::system(command.c_str());
         }
