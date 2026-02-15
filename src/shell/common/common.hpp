@@ -56,9 +56,9 @@ namespace shell::common
         std::vector<std::string> tokenized_input;
         for (; idx < input.size(); ++idx)
         {
-           if (input[idx] == '\'')
+           if (input[idx] == '\'' || input[idx] == '\"')
            {
-               size_t string_end = input.find('\'', idx + 1);
+               size_t string_end = input.find(input[idx], idx + 1);
                if (string_end > idx + 1)
                {
                    tokenized_input.emplace_back(input.substr(idx + 1, string_end - idx - 1));
@@ -76,17 +76,14 @@ namespace shell::common
            {
                size_t string_space = input.find(' ', idx);
                size_t string_apostrophe = input.find('\'', idx);
-               if (string_space == std::string::npos && string_apostrophe == std::string::npos)
+               size_t string_quote = input.find('\"', idx);
+               if (string_space == std::string::npos && string_apostrophe == std::string::npos && string_quote == std::string::npos)
                {
                    tokenized_input.emplace_back(input.substr(idx));
                    break;
                }
 
-               size_t string_end = string_space ==
-                       std::string::npos ? string_apostrophe
-                       : string_apostrophe == std::string::npos ? string_space
-                       : std::min(string_space, string_apostrophe);
-
+               size_t string_end = std::min({string_space, string_apostrophe, string_quote});
                tokenized_input.emplace_back(input.substr(idx, string_end - idx));
                idx = string_end - 1;
            }
